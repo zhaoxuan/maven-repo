@@ -31,6 +31,8 @@
 
 `hanlp.properties` 是 HanLP 使用的配置文件，公共代码已经去掉了这个配置，所以引用的项目必须在 `src/main/resources` 里面加入配置，并且修改 `root` 的位置。
 
+`common.properties` 是 CommonCore 的配置文件，公共代码已经去掉了这个配置，所以引用的项目必须在 `src/main/resources` 里面加入配置。
+
 ## 部署到 Github
 
 1.执行 ./bin/deploy
