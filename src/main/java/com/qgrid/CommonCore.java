@@ -18,24 +18,74 @@
 package com.qgrid;
 
 
+import com.qgrid.nlp.dictionary.Monitor;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 公共代码的初始化方法
  *      其他所有共有代码需要执行初始的，都必须在这里执行
  */
 public class CommonCore {
+    private final static Logger logger = Logger.getLogger(CommonCore.class.getName());
+
+    // 单例
     private static CommonCore singleton;
+    // 定时任务
+    private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
+
+    // 默认配置文件，在 resources 里面
+    public static String configFileName = "common.properties";
+    public static Properties config = new Properties();
+
+    // 中文主词典
+    public static boolean isRemoteChineseMainDict = false;
+    public static String remoteChineseMainDict;
 
     /**
-     * 初始化方法.
+     * 初始化方法.<br>
+     *     所有的配置都可以在这里完成
+     *     synchronized 只允许一个线程执行初始化代码
      *
-     * @return The value returned by the method
+     * @return CommonCore
      *
-     * @throws Exception What kind of exception does this method throw
      */
     public static synchronized CommonCore initial() {
+
         if (CommonCore.singleton == null) {
             CommonCore.singleton = new CommonCore();
+            URL path = CommonCore.singleton.getClass().getClassLoader().getResource(configFileName);
+
+            if (path != null) {
+                try {
+                    String configFilePath = path.getPath();
+
+                    boolean isExists = new File(configFilePath).exists();
+
+                    if (isExists) {
+                        FileInputStream input = new FileInputStream(configFilePath);
+                        CommonCore.config.load(input);
+                    }
+                } catch (IOException e) {
+                    logger.warn("Load common.properties file is not exists, use default value.");
+                }
+
+            }
+
+            if ("true".equals(config.getProperty("isRemoteChineseMainDict"))) {
+                isRemoteChineseMainDict = true;
+                remoteChineseMainDict = config.getProperty("remoteChineseMainDict");
+                pool.scheduleAtFixedRate(new Monitor(remoteChineseMainDict), 10, 60, TimeUnit.SECONDS);
+            }
+
         }
 
         return CommonCore.singleton;
@@ -43,7 +93,7 @@ public class CommonCore {
 
     public static CommonCore getInstance() {
         if (singleton == null) {
-            throw new IllegalStateException("CommonCore has not been initial，please callback initial function.");
+            throw new IllegalStateException("CommonCore has not been initial，please callback initial function first.");
         }
         return singleton;
     }

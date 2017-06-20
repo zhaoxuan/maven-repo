@@ -23,9 +23,10 @@ import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.tokenizer.BasicTokenizer;
 import com.hankcs.hanlp.tokenizer.NotionalTokenizer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.*;
-import java.util.logging.Logger;
+
 
 /**
  * 中文自然语言处理相关.
@@ -124,7 +125,7 @@ public class ChineseNLP {
         }
 
         long endTime = System.currentTimeMillis();
-        // logger.info("程序运行时间: " + (endTime - startTime) + " ms");
+        logger.info("GetKeywords takes time: " + (endTime - startTime) + " ms");
 
         return out;
     }

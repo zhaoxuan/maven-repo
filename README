@@ -1,0 +1,38 @@
+# Qgrid 公共项目代码
+
+公共代码通过 Github 来做 maven 仓库
+
+## 使用方法
+
+`pom.xml` 里面添加新的 maven 仓库
+
+```
+<repositories>
+    <repository>
+        <id>john-maven-repo</id>
+        <url>https://raw.githubusercontent.com/zhaoxuan/maven-repo/master/repository</url>
+    </repository>
+</repositories>
+```
+
+添加新的依赖,修改使用的版本
+
+```
+<dependencies>
+    <dependency>
+        <groupId>com.qgrid</groupId>
+        <artifactId>common-core</artifactId>
+        <version>${common-core.version}</version>
+    </dependency>
+</dependencies>
+```
+
+## 配置文件
+
+`hanlp.properties` 是 HanLP 使用的配置文件，公共代码已经去掉了这个配置，所以引用的项目必须在 `src/main/resources` 里面加入配置，并且修改 `root` 的位置。
+
+## 部署到 Github
+
+1.执行 ./bin/deploy
+
+2.提交 repository 目录下面所有的文件和目录到 Github 上面
